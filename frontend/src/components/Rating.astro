@@ -1,0 +1,30 @@
+---
+const { value = 0 } = Astro.props as { value?: number };
+const stars = Array.from({ length: 5 }, (_, i) => i < Math.round(value));
+---
+
+<div class="rating" role="img" aria-label={`Rating: ${Math.round(value)}/5`}>
+  {stars.map((filled) => (
+    <span class={`star ${filled ? 'filled' : ''}`} aria-hidden="true">★</span>
+  ))}
+  <span class="sr"> {Math.round(value)}/5</span>
+</div>
+
+<style>
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: .125rem;
+    color: #9ca3af;
+  }
+  .star.filled {
+    color: var(--color-secondary);
+  }
+  .sr {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+  }
+</style>

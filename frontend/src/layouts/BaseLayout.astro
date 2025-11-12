@@ -1,0 +1,43 @@
+---
+import '../styles/theme.css';
+import Header from '../components/Header.astro';
+const { title = 'Recipe Explorer' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#2563EB" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <style>
+      .page-wrap {
+        min-height: 100dvh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        background: var(--gradient-accent);
+      }
+      .footer {
+        padding: 2rem 1rem;
+        text-align: center;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <Header />
+      <main class="container" style="padding: 1.25rem 1rem 2.5rem;">
+        <slot />
+      </main>
+      <footer class="footer">
+        <div class="container">
+          <small>© {new Date().getFullYear()} Recipe Explorer</small>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

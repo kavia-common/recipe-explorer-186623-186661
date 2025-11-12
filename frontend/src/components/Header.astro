@@ -1,0 +1,73 @@
+---
+import SearchBar from './SearchBar.astro';
+const { showSearch = true } = Astro.props;
+---
+
+<header class="app-header" role="banner">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Recipe Explorer Home">
+      <div class="brand-icon" aria-hidden="true">🍳</div>
+      <span class="brand-name">Recipe Explorer</span>
+    </a>
+
+    {showSearch ? (
+      <div class="header-search">
+        <SearchBar id="global-search" placeholder="Search recipes..." />
+      </div>
+    ) : null}
+  </div>
+</header>
+
+<style>
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--surface);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(6px);
+  }
+  .header-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+  }
+  @media (min-width: 768px) {
+    .header-inner {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+    }
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: radial-gradient(120px 60px at -5% -20%, rgba(37,99,235,0.18), transparent),
+                radial-gradient(120px 60px at 130% 130%, rgba(245,158,11,0.25), transparent);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-sm);
+  }
+  .brand-name {
+    letter-spacing: .2px;
+  }
+  .header-search {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .header-search {
+      display: block;
+    }
+  }
+</style>

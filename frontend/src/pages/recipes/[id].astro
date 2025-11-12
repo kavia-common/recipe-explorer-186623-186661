@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Tag from '../../components/Tag.astro';
+import Rating from '../../components/Rating.astro';
+import { fetchRecipeById } from '../../lib/api';
+import type { Recipe } from '../../lib/mockData';
+import { mockRecipes } from '../../lib/mockData';
+
+export const prerender = true;
+
+// PUBLIC_INTERFACE
+export async function getStaticPaths() {
+  /**
+   * Generates static paths for recipe detail pages at build time.
+   * Uses mockRecipes so the app builds even without PUBLIC_API_BASE.
+   */
+  return mockRecipes.map(r => ({
+    params: { id: r.id },
+    props: { id: r.id },
+  }));
+}
+
+const { id } = Astro.params;
+const recipe = await fetchRecipeById(String(id)) as Recipe | undefined;
+
+const pageTitle = recipe ? `${recipe.title} • Recipe Explorer` : 'Recipe • Recipe Explorer';
+---
+
+<BaseLayout title={pageTitle}>
+  {recipe ? (
+    <article class="card" style="overflow:hidden;">
+      <div class="banner">
+        <img
+          src={recipe.image ?? 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=60'}
+          alt={recipe.title}
+          width="1400"
+          height="600"
+        />
+        <a href="/" class="back" aria-label="Back to recipes">← Back</a>
+        <div class="banner-badges">
+          <span class="chip">⏱ {recipe.time}</span>
+          <span class="chip">🍽 {recipe.servings} servings</span>
+        </div>
+      </div>
+
+      <div class="content container">
+        <header class="header">
+          <h1 class="title">{recipe.title}</h1>
+          <Rating value={recipe.rating} />
+        </header>
+
+        {recipe.tags?.length ? (
+          <div class="tags">
+            {recipe.tags.map((t) => <Tag label={t} />)}
+          </div>
+        ) : null}
+
+        <section class="layout">
+          <section aria-labelledby="ingredients-heading" class="panel">
+            <h2 id="ingredients-heading">Ingredients</h2>
+            <ul>
+              {recipe.ingredients.map((ing) => <li>{ing}</li>)}
+            </ul>
+          </section>
+
+          <section aria-labelledby="steps-heading" class="panel">
+            <h2 id="steps-heading">Steps</h2>
+            <ol>
+              {recipe.steps.map((step) => <li>{step}</li>)}
+            </ol>
+          </section>
+        </section>
+      </div>
+    </article>
+  ) : (
+    <div class="container">
+      <p>Recipe not found.</p>
+      <p><a class="btn" href="/">Go back</a></p>
+    </div>
+  )}
+
+  <style>
+    .banner {
+      position: relative;
+      aspect-ratio: 16/6.5;
+      background: #e5e7eb;
+    }
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .back {
+      position: absolute;
+      top: .75rem; left: .75rem;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: .45rem .7rem;
+      border-radius: 999px;
+      text-decoration: none;
+      color: #111827;
+      box-shadow: var(--shadow-sm);
+    }
+    .banner-badges {
+      position: absolute;
+      right: .75rem; bottom: .75rem;
+      display: flex; gap: .4rem; flex-wrap: wrap;
+    }
+    .chip {
+      background: rgba(17,24,39,0.65);
+      color: #fff;
+      padding: .35rem .6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      font-size: .9rem;
+    }
+    .content {
+      padding: 1.25rem 1rem 2rem;
+    }
+    .header {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .title { margin: .5rem 0; }
+    .tags {
+      display: flex; flex-wrap: wrap; gap: .35rem;
+      margin: .35rem 0 1rem;
+    }
+    .layout {
+      display: grid; gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr 2fr;
+      }
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    ul, ol {
+      margin: .25rem 0 0 1.25rem;
+      line-height: 1.6;
+    }
+  </style>
+</BaseLayout>

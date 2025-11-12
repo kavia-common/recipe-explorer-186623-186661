@@ -1,14 +1,13 @@
-// eslint.config.mjs
+/* eslint.config.mjs */
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
   js.configs.recommended,
-
-  // TypeScript support
   ...tseslint.configs.recommended,
 
+  // TypeScript
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -20,15 +19,14 @@ export default [
       },
     },
     rules: {
-      // Example custom rules for TS
       '@typescript-eslint/no-unused-vars': ['warn'],
       '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 
-  // JS files config (same as before)
+  // JavaScript
   {
-    files: ['**/*.js', '**/*.jsx'],
+    files: ['**/*.js', '**/*.jsx', '**/*.mjs', '**/*.cjs'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -41,6 +39,16 @@ export default [
       'no-unused-vars': 'warn',
       'no-console': 'off',
       'eqeqeq': ['error', 'always'],
+    },
+  },
+
+  // Silence Astro-generated declaration files under .astro/
+  {
+    files: ['.astro/*.d.ts', '.astro/**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/triple-slash-reference': 'off',
     },
   },
 ];
